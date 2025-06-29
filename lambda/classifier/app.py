@@ -2,6 +2,8 @@ import json
 import logging
 import os
 import boto3
+import io
+import PyPDF2
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -24,8 +26,17 @@ def lambda_handler(event, context):
         try:
             # Get the document content from S3
             response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
-            document_content = response['Body'].read().decode('utf-8')
-            logger.info(f"Document content read: {document_content[:100]}...") # Log first 100 chars
+            # Read the PDF content as bytes
+            pdf_content = response['Body'].read()
+            
+            # Use PyPDF2 to extract text
+            pdf_file = io.BytesIO(pdf_content)
+            reader = PyPDF2.PdfReader(pdf_file)
+            document_content = ""
+            for page_num in range(len(reader.pages)):
+                document_content += reader.pages[page_num].extract_text() or ""
+            
+            logger.info(f"Document content extracted (first 100 chars): {document_content[:100]}...")
 
             # Prepare prompt for Bedrock classification
             prompt = f"Human: Document types: [\"invoice\", \"receipt\", \"contract\", \"report\", \"other\"]\nClassify this document clearly into one type:\n\nDocument Content:\n{document_content}\nAssistant:"
@@ -54,7 +65,8 @@ def lambda_handler(event, context):
                 payload = {
                     "bucket_name": bucket_name,
                     "object_key": object_key,
-                    "document_type": classification
+                    "document_type": classification,
+                    "document_content": document_content # Pass extracted content
                 }
                 lambda_client.invoke(
                     FunctionName=EXTRACTOR_LAMBDA_ARN,

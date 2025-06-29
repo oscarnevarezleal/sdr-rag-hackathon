@@ -24,14 +24,13 @@ def lambda_handler(event, context):
     bucket_name = event['bucket_name']
     object_key = event['object_key']
     document_type = event.get('document_type', 'unknown')
+    document_content = event.get('document_content', '') # Get content from event
 
     logger.info(f"Extracting data from document {object_key} (Type: {document_type}) from bucket {bucket_name}")
 
     try:
-        # Get the document content from S3
-        response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
-        document_content = response['Body'].read().decode('utf-8')
-        logger.info(f"Document content read: {document_content[:100]}...") # Log first 100 chars
+        # Document content is now passed from the Classifier Lambda
+        logger.info(f"Document content received (first 100 chars): {document_content[:100]}...") # Log first 100 chars
 
         # Prepare prompt for Bedrock extraction
         # This prompt is generic; in a real scenario, it would be tailored per document_type
@@ -85,6 +84,18 @@ def lambda_handler(event, context):
                 Payload=json.dumps(payload)
             )
             logger.info(f"Invoked Router Lambda for {object_key}")
+
+            embedding_payload = {
+                "document_id": object_key,
+                "extracted_text": document_content
+            }
+            lambda_client.invoke(
+                FunctionName=os.environ['EMBEDDING_GENERATOR_LAMBDA_ARN'],
+                InvocationType='Event',
+                Payload=json.dumps(embedding_payload)
+            )
+            logger.info(f"Invoked Embedding Generator Lambda for {object_key}")
+
         else:
             logger.warning("ROUTER_LAMBDA_ARN not set. Skipping Router Lambda invocation.")
 

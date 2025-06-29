@@ -21,10 +21,22 @@ A fully automated, serverless pipeline leveraging AWS Lambda and Amazon Bedrock 
 [Lambda: DocumentDataExtractor]
   └─ Extract Data (Bedrock/Textract)
         ↓
+[Lambda: EmbeddingGenerator]
+  └─ Generate Embeddings (Bedrock Titan)
+        ↓
+[PostgreSQL (pgvector)]
+  └─ Store Document Embeddings
+        ↓
 [Lambda: DocumentRouter]
  ├─ Store Metadata (DynamoDB)
  ├─ Move File (S3 Organized Folder)
  └─ Send Notifications (SNS/SES)
+
+[User Query → API Gateway + Lambda: ChatQueryHandler]
+  ├─ Generate Query Embedding (Bedrock Titan)
+  ├─ Query PostgreSQL for similar document chunks
+  ├─ Construct Prompt with relevant chunks
+  └─ Generate Answer (Bedrock)
 ```
 
 ## 🔧 Lambda Functions Explained
@@ -36,7 +48,9 @@ A fully automated, serverless pipeline leveraging AWS Lambda and Amazon Bedrock 
 | **DocumentClassifier**    | Classifies document type using Amazon Bedrock.        |
 | ------------------------- | ----------------------------------------------------- |
 | **DocumentDataExtractor** | Extracts structured data from documents.              |
+| **EmbeddingGenerator**    | Generates vector embeddings from document text and stores them in PostgreSQL. |
 | **DocumentRouter**        | Routes files, logs metadata, and sends notifications. |
+| **ChatQueryHandler**      | Handles user queries, retrieves relevant document chunks, and generates answers. |
 
 ## 🧠 Bedrock Prompt Examples
 
@@ -70,6 +84,18 @@ curl -X POST -H "x-file-name: your_document_name.pdf" --data-binary "@./path/to/
 ```
 
 Replace `<YOUR_UPLOAD_FUNCTION_URL>` with the actual URL from your CloudFormation stack outputs (e.g., `aws cloudformation describe-stacks --stack-name SdrLambdasStack --query 'Stacks[0].Outputs[?OutputKey==`UploadUrl`].OutputValue' --output text`).
+
+## 💬 Chat with your PDF
+
+After a document has been uploaded and processed (which includes embedding generation), you can chat with it using the exposed API Gateway endpoint.
+
+**Chat Command Example (using `curl`):**
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"query": "What is the total amount of invoice INV-2321?"}' <YOUR_CHAT_API_URL>/chat
+```
+
+Replace `<YOUR_CHAT_API_URL>` with the actual URL from your CloudFormation stack outputs (e.g., `aws cloudformation describe-stacks --stack-name SdrChatStack --query 'Stacks[0].Outputs[?OutputKey==`ChatApiUrl`].OutputValue' --output text`).
 
 ## 📦 Example Data Flow JSON
 
