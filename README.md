@@ -73,6 +73,47 @@ Document:
 <<DOCUMENT_TEXT>>
 ```
 
+## 🚀 Deployment
+
+This project is deployed using the AWS CDK. The following steps outline the deployment process:
+
+### 1. Prerequisites
+
+*   Node.js and npm installed
+*   AWS CLI configured with your credentials
+*   AWS CDK installed (`npm install -g aws-cdk`)
+
+### 2. Install Dependencies
+
+Navigate to the `cdk` directory and install the required npm packages:
+
+```bash
+cd cdk
+npm install
+```
+
+### 3. Deploy the Stacks
+
+The CDK application is divided into multiple stacks. Deploy them in the following order:
+
+```bash
+cdk deploy SdrBucketsStack
+cdk deploy SdrDatabaseStack
+cdk deploy SdrPostgresStack
+cdk deploy SdrChatStack
+cdk deploy SdrLambdasStack
+```
+
+### 4. Enable pgvector Extension
+
+After deploying the `SdrPostgresStack`, you need to manually enable the `pgvector` extension in the PostgreSQL database. A Makefile command is provided for this purpose:
+
+```bash
+make enable-pgvector
+```
+
+This command invokes a Lambda function that connects to the database and executes the necessary SQL command.
+
 ## ⬆️ Document Upload
 
 Documents can be uploaded to the system via the `UploadHandler` Lambda's Function URL. This URL is exposed as a CloudFormation output.
@@ -84,6 +125,24 @@ curl -X POST -H "x-file-name: your_document_name.pdf" --data-binary "@./path/to/
 ```
 
 Replace `<YOUR_UPLOAD_FUNCTION_URL>` with the actual URL from your CloudFormation stack outputs (e.g., `aws cloudformation describe-stacks --stack-name SdrLambdasStack --query 'Stacks[0].Outputs[?OutputKey==`UploadUrl`].OutputValue' --output text`).
+
+## 🧪 Testing with Make
+
+To simplify testing, a `Makefile` is provided with the following commands:
+
+*   `make enable-pgvector`: Manually invokes the Lambda function to enable the `pgvector` extension in your PostgreSQL database. This needs to be run once after the `SdrPostgresStack` is deployed.
+
+*   `make test`: Uploads a sample document, waits for processing, and then queries the chat API with a predefined question. You can override the default `UPLOAD_FILE` and `CHAT_QUERY` variables.
+
+    ```bash
+    make test UPLOAD_FILE=data/CompanyDocuments/invoices/invoice_10249.pdf CHAT_QUERY="What is the total amount of the invoice?"
+    ```
+
+*   `make chat`: Directly queries the chat API with a predefined or overridden question. Useful for quick iterations on chat prompts.
+
+    ```bash
+    make chat CHAT_QUERY="What is the order ID for the invoice from Karin Josephs?"
+    ```
 
 ## 💬 Chat with your PDF
 
