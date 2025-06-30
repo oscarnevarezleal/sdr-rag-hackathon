@@ -257,8 +257,13 @@ pending
 ```
 smart-document-router/
 ├── README.md
+├── cdk/
+├── data/
 ├── lambda/
 │   ├── classifier/
+│   ├── chat-query-handler
+│   ├── pgvector-enabler
+│   ├──embedding-generator
 │   ├── extractor/
 │   └── router/
 ├── tests/
