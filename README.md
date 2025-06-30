@@ -1,14 +1,14 @@
-# 📂 Smart Document Router (SDR)
+# Smart Document Router (SDR)
 
-## 📝 Problem Statement
+## Problem Statement
 
 Businesses receive numerous documents (invoices, receipts, contracts) requiring manual classification and routing. This process is costly, error-prone, and inefficient.
 
-## 🚀 Solution
+## Solution
 
 A fully automated, serverless pipeline leveraging AWS Lambda and Amazon Bedrock to classify, extract, and route documents efficiently.
 
-## ⚙️ Architecture Overview
+## Architecture Overview
 
 ```
 [User Document Upload → Lambda: UploadHandler (Function URL)]
@@ -39,7 +39,7 @@ A fully automated, serverless pipeline leveraging AWS Lambda and Amazon Bedrock 
   └─ Generate Answer (Bedrock)
 ```
 
-## 🔧 Lambda Functions Explained
+## Lambda Functions Explained
 
 | Lambda Function   | Responsibility                                  |
 | ----------------- | ----------------------------------------------- |
@@ -52,7 +52,9 @@ A fully automated, serverless pipeline leveraging AWS Lambda and Amazon Bedrock 
 | **DocumentRouter**        | Routes files, logs metadata, and sends notifications. |
 | **ChatQueryHandler**      | Handles user queries, retrieves relevant document chunks, and generates answers. |
 
-## 🧠 Bedrock Prompt Examples
+## Bedrock Prompt Examples
+
+pending
 
 ### Classification
 
@@ -144,7 +146,14 @@ To simplify testing, a `Makefile` is provided with the following commands:
     make chat CHAT_QUERY="What is the order ID for the invoice from Karin Josephs?"
     ```
 
-## 💬 Chat with your PDF
+    Or
+
+    ```bash
+    make chat CHAT_QUERY="What do you know about 10249?"
+    ```
+
+
+## Chat with your document
 
 After a document has been uploaded and processed (which includes embedding generation), you can chat with it using the exposed API Gateway endpoint.
 
@@ -193,7 +202,7 @@ s3://company-documents/
 - Email to Accounting for invoices
 - Email to Legal for contracts
 
-## 🛠️ Implementation Roadmap
+## Implementation Roadmap
 
 ### Step 1: AWS Resources Setup
 
@@ -215,13 +224,15 @@ s3://company-documents/
 - Set up CloudWatch alarms
 - Automate periodic summaries
 
-## 🔐 Security Best Practices
+## Security Best Practices
 
 - Minimal IAM permissions
 - Encryption at rest/in-transit
 - Audit trails (CloudTrail, DynamoDB logs)
 
-## 💰 Cost Estimation (Monthly \~5,000 documents)
+## Cost Estimation (Monthly \~5,000 documents)
+
+> Costs are approximated.
 
 | Service                | Estimated Monthly Cost |
 | ---------------------- | ---------------------- |
@@ -229,16 +240,14 @@ s3://company-documents/
 | S3 Storage/Requests    | \$2.00                 |
 | Bedrock (Claude/Titan) | \$25.00                |
 | DynamoDB               | \$1.00                 |
+| PostgreSQL             | \$10.00                |
 | SNS/SES Notifications  | \$1.00                 |
-| **Total**              | **\~\$30/month**       |
+| **Total**              | **\~\$40/month**       |
 
-## 🧪 Future Enhancements
 
-- Real-time analytics dashboard
-- AI-generated periodic summaries
-- Human feedback loop for improved accuracy
+## Demo Submission Outline
 
-## 🎥 Demo Submission Outline
+pending
 
 ### GitHub Repository Structure
 
@@ -254,10 +263,7 @@ smart-document-router/
 
 ---
 
-🎯 **Next Steps**
+**Next Steps**
 
-- Implement initial Lambdas
 - Develop comprehensive tests
 - Fine-tune Bedrock prompts for maximum accuracy
-
-# sdr-rag-hackathon
