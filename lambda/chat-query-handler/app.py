@@ -1,5 +1,3 @@
-
-
 import json
 import boto3
 import os
@@ -44,27 +42,48 @@ def handler(event, context):
         cur.execute("""
         SELECT chunk_text
         FROM document_embeddings
-        ORDER BY embedding <-> %s
+        ORDER BY embedding <-> %s::vector
         LIMIT 5;
         """, (query_embedding,))
         results = [row[0] for row in cur.fetchall()]
 
     context = "\n".join(results)
 
-    prompt = f"""Human: You are a helpful assistant. Please answer the following question based on the provided context.\n\nContext:\n{context}\n\nQuestion: {query}\n\nAssistant:"""
+    # Updated prompt format for Claude 3 Messages API
+    messages = [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": f"You are a helpful assistant. Please answer the following question based on the provided context.\n\nContext:\n{context}\n\nQuestion: {query}"
+                }
+            ]
+        }
+    ]
+
+    bedrock_request_body = {
+        "anthropic_version": "bedrock-2023-05-31",
+        "messages": messages,
+        "max_tokens": 500
+    }
 
     response = bedrock.invoke_model(
         modelId=os.environ['BEDROCK_MODEL_ID'],
-        body=json.dumps({
-            "prompt": prompt,
-            "max_tokens_to_sample": 500
-        })
+        contentType="application/json",
+        accept="application/json",
+        body=json.dumps(bedrock_request_body)
     )
 
     response_body = json.loads(response['body'].read())
+    
+    # Extracting the completion from the new response format
+    completion = ""
+    for content_block in response_body['content']:
+        if content_block['type'] == 'text':
+            completion += content_block['text']
 
     return {
         'statusCode': 200,
-        'body': json.dumps({'response': response_body['completion']})
+        'body': json.dumps({'response': completion})
     }
-
