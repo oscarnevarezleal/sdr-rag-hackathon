@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "bd406fc4-64aa-4653-9e09-602c27336217",
+		"name": "SDR-RAG",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36771858",
+		"_collection_link": "https://team-kompas.postman.co/workspace/team-kompas~25556ac8-d4f6-4260-8a1d-d876886c8189/collection/36771858-bd406fc4-64aa-4653-9e09-602c27336217?action=share&source=collection_link&creator=36771858"
+	},
+	"item": [
+		{
+			"name": "Chat",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query\": \"do you know about invoice 10902\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api_endpoint}}/chat",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"chat"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Chat Conversation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query\": \"Summaryze the order\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api_endpoint}}/chat/:conversation_id",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"chat",
+						":conversation_id"
+					],
+					"variable": [
+						{
+							"key": "conversation_id",
+							"value": "1800fc04-9a98-42ea-9d96-bb23864d941d"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-file-name",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/Users/oscarnevarez/playground/sdr-hackaton-project/data/CompanyDocuments/invoices/invoice_10902.pdf"
+					}
+				},
+				"url": {
+					"raw": "{{api_upload_endpoint}}/upload",
+					"host": [
+						"{{api_upload_endpoint}}"
+					],
+					"path": [
+						"upload"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
