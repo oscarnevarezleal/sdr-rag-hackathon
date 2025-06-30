@@ -93,7 +93,7 @@ export default function ConversationSidebar({
       </button>
 
       {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-lg transition-transform duration-300 z-10 ${
+      <div className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-lg transition-transform duration-300 z-20 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } w-80`}>
         <div className="flex flex-col h-full">

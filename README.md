@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-Businesses receive numerous documents (invoices, receipts, contracts) requiring manual classification and routing. This process is costly, error-prone, and inefficient.
+Businesses are flooded with documents like invoices, receipts, and contracts that require manual classification, data extraction, and routing. Even when these workflows are digitized, most organizations still lack effective tools to search, retrieve, and interact with the underlying data. As a result, finding the right information—like the status of an invoice or a payment date—remains slow, error-prone, and operationally expensive.
 
 ## Solution
 
@@ -52,9 +52,6 @@ A fully automated, serverless pipeline leveraging AWS Lambda and Amazon Bedrock 
 | **DocumentRouter**        | Routes files, logs metadata, and sends notifications. |
 | **ChatQueryHandler**      | Handles user queries, retrieves relevant document chunks, and generates answers. |
 
-## Bedrock Prompt Examples
-
-pending
 
 ### Classification
 
@@ -108,7 +105,7 @@ cdk deploy SdrLambdasStack
 
 ### 4. Enable pgvector Extension
 
-After deploying the `SdrPostgresStack`, you need to manually enable the `pgvector` extension in the PostgreSQL database. A Makefile command is provided for this purpose:
+After deploying the `SdrPostgresStack`, you need to manually enable the `pgvector` extension in the PostgreSQL database if this is not present by default. A Makefile command is provided for this purpose:
 
 ```bash
 make enable-pgvector
@@ -116,7 +113,13 @@ make enable-pgvector
 
 This command invokes a Lambda function that connects to the database and executes the necessary SQL command.
 
-## ⬆️ Document Upload
+## Document dataset
+
+This project contains a dataset of 2,677 PDF files, each representing a unique company document. These documents are derived from the Northwind dataset, which is commonly used for demonstrating database functionalities. 
+
+The dataset was downloaded from public project at Kaggle https://www.kaggle.com/datasets/ayoubcherguelaine/company-documents-dataset?resource=download.
+
+## Document Upload
 
 Documents can be uploaded to the system via the `UploadHandler` Lambda's Function URL. This URL is exposed as a CloudFormation output.
 

@@ -136,7 +136,7 @@ function App() {
 
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10">
-        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 transition-all ${
+        <div className={`max-w-7xl z-10 mx-auto px-4 sm:px-6 lg:px-8 py-4 transition-all ${
           sidebarOpen ? 'ml-80' : 'ml-0'
         }`}>
           <div className="flex items-center justify-between">
@@ -144,7 +144,7 @@ function App() {
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">AI</span>
               </div>
-              <h1 className="text-xl font-semibold text-gray-800">DocChat AI</h1>
+              <h1 className="text-xl font-semibold text-gray-800">SDR RAG</h1>
             </div>
             
             <div className="flex items-center space-x-4">
@@ -201,7 +201,7 @@ function App() {
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                 Upload {uploadMode === 'single' ? 'a document' : 'multiple documents'} and start an intelligent conversation. 
-                Our AI will analyze your {uploadMode === 'single' ? 'file' : 'files'} and answer questions about the content.
+                Our project will analyze your {uploadMode === 'single' ? 'file' : 'files'} and answer questions about the content.
               </p>
             </div>
             
