@@ -56,6 +56,50 @@ def create_table_if_not_exists(conn):
     except Exception as e:
         logger.error(f"Error creating table: {e}")
         raise
+    
+    
+    
+    
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS conversations (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                system_name TEXT DEFAULT 'SmartDocumentRouter', -- Optional LLM/system role
+                topic TEXT,             -- e.g., "ACME April Invoice Audit"
+                purpose TEXT,           -- e.g., "invoice QA", "policy review"
+                metadata JSONB,         -- e.g., {"document_ids": [...], "tags": ["invoice"]}
+                context JSONB,          -- Optional running state (for summarization, etc.)
+                status TEXT NOT NULL DEFAULT 'active',  -- 'active', 'archived', 'closed'
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+            );
+            """)
+            conn.commit()
+        logger.info("Table `conversations` creation/check completed successfully.")
+    except Exception as e:
+        logger.error(f"Error creating table `conversations` : {e}")
+        raise
+
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS conversation_messages (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+                role TEXT NOT NULL CHECK (role IN ('user', 'system', 'assistant')),
+                content TEXT NOT NULL,
+                document_refs JSONB,  -- Optional: linked document IDs or extracted fields
+                token_count INT,      -- For prompt budget accounting
+                embedding VECTOR(1536),  -- pgvector must be enabled
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+            );
+            """)
+            conn.commit()
+        logger.info("Table `conversation_messages` creation/check completed successfully.")
+    except Exception as e:
+        logger.error(f"Error creating table `conversation_messages` : {e}")
+        raise
 
 def chunk_text(text, chunk_size=256, overlap=20):
     tokens = text.split()

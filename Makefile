@@ -32,7 +32,7 @@ test:
 	@echo "Waiting for document processing (10 seconds)..."
 	@sleep 10
 
-	@echo "Querying chat API at $(CHAT_API_URL)chat with prompt: \"$(CHAT_QUERY)\"
+	@echo "Querying chat API at $(CHAT_API_URL)chat with prompt: \"$(CHAT_QUERY)\""
 	@curl -X POST -H "Content-Type: application/json" -d '{"query": "$(subst ",\",$(CHAT_QUERY))"}' $(CHAT_API_URL)chat
 
 upload:

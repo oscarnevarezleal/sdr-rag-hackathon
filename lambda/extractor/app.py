@@ -19,21 +19,21 @@ EMBEDDING_GENERATOR_LAMBDA_ARN = os.environ.get("EMBEDDING_GENERATOR_LAMBDA_ARN"
 # Define extraction fields per document type
 FIELDS_BY_TYPE = {
     "invoice": [
+        "order_id",
         "customer_id",
         "customer_name",
-        "order_id",
         "total_amount",
         "order_date",
     ],
     "shipping_order": [
+        "order_id",
         "customer_id",
         "ship_name",
         "ship_address",
-        "order_id",
         "total_amount",
         "order_date",
     ],
-    "purchase_order": ["customer_name", "order_id", "total_amount", "order_date"],
+    "purchase_order": ["order_id", "customer_name", "total_amount", "order_date"],
     "receipt": ["vendor_name", "transaction_date", "total_amount", "payment_method"],
     "report": ["report_title", "report_date", "author", "summary"],
 }
