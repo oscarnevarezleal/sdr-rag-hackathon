@@ -39,7 +39,7 @@ def lambda_handler(event, context):
             logger.info(f"Document content extracted (first 100 chars): {document_content[:100]}...")
 
             # Prepare prompt for Bedrock classification
-            prompt = f"Human: Document types: [\"invoice\", \"receipt\", \"shipping_order\", \"purchase_order\", \"contract\", \"inventory_report\", \"unknown\"]\nClassify this document clearly into one type, if it is not one of the types, return \"unknown\". Do not return any other text than the type.\n\nDocument Content:\n{document_content}\nAssistant:"
+            prompt = f"Human: Document types: [ \"waybill\", \"invoice\", \"receipt\", \"shipping_order\", \"purchase_order\", \"contract\", \"inventory_report\", \"unknown\"]\nClassify this document clearly into one type, if it is not one of the types, return \"unknown\". Do not return any other text than the type.\n\nDocument Content:\n{document_content}\nAssistant:"
             logger.info(f"Prompt prepared: {prompt[:100]}...") # Log first 100 chars of prompt
 
             # Invoke Bedrock for classification

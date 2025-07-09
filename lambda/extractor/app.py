@@ -18,6 +18,50 @@ EMBEDDING_GENERATOR_LAMBDA_ARN = os.environ.get("EMBEDDING_GENERATOR_LAMBDA_ARN"
 
 # Define extraction fields per document type
 FIELDS_BY_TYPE = {
+    "waybill": [
+        "waybill_document_number",
+        "waybill_document_number_2",
+        "waybill_document_number_3",
+        "alphanumeric_code",
+        "alphanumeric_code_2",
+        "alphanumeric_code_3",
+        "origen_address",
+        "origen_city",
+        "origen_state",
+        "origen_zip",
+        "origen_country",
+        "origen_phone",
+        "origen_email",
+        "ship_name",
+        "ship_address",
+        "ship_city",
+        "ship_state",
+        "ship_zip",
+        "ship_country",
+        "ship_phone",
+        "ship_email",
+        "total_amount",
+        "creation_date",
+        "total_weight",
+        "total_volume",
+        "total_quantity",
+        "total_items",
+        "total_packages",
+        "type_of_journey",
+        "type_of_vehicle",
+        "type_of_transport",
+        "type_of_goods",
+        "type_of_goods_description",
+        "type_of_goods_quantity",
+        "type_of_goods_weight",
+        "vat_number",
+        "invoice_number",
+        "invoice_date",
+        "invoice_amount",
+        "invoice_currency",
+        "invoice_status",
+        "invoice_type",
+    ],
     "invoice": [
         "order_id",
         "customer_id",
@@ -61,8 +105,11 @@ def lambda_handler(event, context):
 
         # Construct dynamic prompt
         prompt = (
-            f"Human: Extract the following fields as structured JSON. It is very important that you do not reply with anything else than the JSON output: {fields_to_extract}.\n\n"
-            f"Document:\n{document_content}\nAssistant:"
+            f"Human: You are a strict JSON API. Do not include explanations, comments, or markdown.\n\n"
+            f"Extract the following fields from the document and return a valid, parsable JSON object with keys for each of the following fields (even if the value is null): `{fields_to_extract}`.\n\n"
+            f"Respond with ONLY a JSON object and nothing else.\n\n"
+            "Your response **must start with** '{' and end with '}'. Do not include triple backticks or markdown syntax.\n\n"
+            f"Document:\n ```text\n{document_content}\n```\nAssistant:"
         )
         logger.info(f"Extraction prompt prepared: {prompt[:100]}...")
 
@@ -74,8 +121,8 @@ def lambda_handler(event, context):
             body=json.dumps(
                 {
                     "prompt": prompt,
-                    "max_tokens_to_sample": 500,
-                    "temperature": 0.1,
+                    "max_tokens_to_sample": 1000,
+                    "temperature": 0.0,
                 }
             ),
         )

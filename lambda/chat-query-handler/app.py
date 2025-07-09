@@ -24,7 +24,7 @@ def get_db_connection(credentials):
 
 def generate_embedding(text):
     response = bedrock.invoke_model(
-        modelId='amazon.titan-embed-text-v1',
+        modelId=os.environ['TITAN_BEDROCK_MODEL_ID'],
         body=json.dumps({'inputText': text})
     )
     response_body = json.loads(response['body'].read())
