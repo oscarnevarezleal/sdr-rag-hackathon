@@ -48,7 +48,7 @@ def create_table_if_not_exists(conn):
                 id SERIAL PRIMARY KEY,
                 document_id VARCHAR(255) NOT NULL,
                 chunk_text TEXT NOT NULL,
-                embedding vector(1536)
+                embedding vector(1024)
             );
             """)
             conn.commit()
